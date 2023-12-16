@@ -7,14 +7,12 @@
   "compilerOptions": {
     "outDir": "build",
     "baseUrl": ".",
+    "rootDir": "src",
     "resolveJsonModule": true,
     "typeRoots": [
       "node_modules/@types",
       "types"
-    ],
-    "paths": {
-      "#src/*": ["src/*"]
-    }
+    ]
   },
   "include": [
     "src/**/*",

@@ -1,5 +1,26 @@
-import { EOL } from 'node:os';
-import * as mime from 'mime-types';
+'use strict';
+
+var node_os = require('node:os');
+var mime = require('mime-types');
+
+function _interopNamespaceDefault(e) {
+    var n = Object.create(null);
+    if (e) {
+        Object.keys(e).forEach(function (k) {
+            if (k !== 'default') {
+                var d = Object.getOwnPropertyDescriptor(e, k);
+                Object.defineProperty(n, k, d.get ? d : {
+                    enumerable: true,
+                    get: function () { return e[k]; }
+                });
+            }
+        });
+    }
+    n.default = e;
+    return Object.freeze(n);
+}
+
+var mime__namespace = /*#__PURE__*/_interopNamespaceDefault(mime);
 
 class MIMETextError extends Error {
     name = '';
@@ -425,7 +446,7 @@ class MIMEMessage {
         return this.messages.some(matcher) ? this.messages.filter(matcher) : [];
     }
     getMessageByType(type) {
-        const matcher = (msg) => (msg.getHeader('Content-Type') || '').includes(type);
+        const matcher = (msg) => !msg.isAttachment() && !msg.isInlineAttachment() && (msg.getHeader('Content-Type') || '').includes(type);
         return this.messages.some(matcher) ? this.messages.filter(matcher)[0] : undefined;
     }
     addAttachment(opts) {
@@ -549,22 +570,26 @@ class MIMEMessage {
 
 const envctx = {
     toBase64: function toBase64(data) {
-        return (new Buffer(data)).toString('base64');
+        return (Buffer.from(data)).toString('base64');
     },
     toBase64WebSafe: function toBase64WebSafe(data) {
-        return (new Buffer(data)).toString('base64')
+        return (Buffer.from(data)).toString('base64')
             .replace(/\+/g, '-')
             .replace(/\//g, '_')
             .replace(/=+$/, '');
     },
-    eol: EOL,
+    eol: node_os.EOL,
     validateContentType: (v) => {
-        return mime.contentType(v);
+        return mime__namespace.contentType(v);
     }
 };
 function createMimeMessage() {
     return new MIMEMessage(envctx);
 }
 
-export { MIMEMessage, MIMEMessageContent, MIMEMessageHeader, MIMETextError, Mailbox, createMimeMessage };
-//# sourceMappingURL=index.js.map
+exports.MIMEMessage = MIMEMessage;
+exports.MIMEMessageContent = MIMEMessageContent;
+exports.MIMEMessageHeader = MIMEMessageHeader;
+exports.MIMETextError = MIMETextError;
+exports.Mailbox = Mailbox;
+exports.createMimeMessage = createMimeMessage;
